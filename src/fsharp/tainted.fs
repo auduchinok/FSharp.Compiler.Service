@@ -13,7 +13,7 @@ open System.Reflection
 open System.Collections.Generic
 open ErrorLogger
 
-type internal TypeProviderError
+type (* internal *) TypeProviderError
     (
         errNum : int,
         tpDesignation : string,

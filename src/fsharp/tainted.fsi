@@ -12,7 +12,7 @@ open Microsoft.FSharp.Compiler.Range
 open Microsoft.FSharp.Compiler.AbstractIL.IL
 
 /// Stores and transports aggregated list of errors reported by the type provider
-type internal TypeProviderError =
+type (* internal *) TypeProviderError =
     inherit System.Exception
     
     /// creates new instance of TypeProviderError that represents one error
