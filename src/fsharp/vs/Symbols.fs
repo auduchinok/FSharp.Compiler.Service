@@ -282,6 +282,10 @@ and FSharpEntity(cenv:cenv, entity:EntityRef) =
             | CompiledTypeRepr.ILAsmNamed(tref,_,_) -> Some tref.FullName
             | CompiledTypeRepr.ILAsmOpen _ -> None   
 
+    member x.FullCompiledName =
+        checkIsResolved()
+        entity.CompiledRepresentationForNamedType.FullName
+
     member __.DeclarationLocation = 
         checkIsResolved()
         entity.Range
@@ -561,6 +565,11 @@ and FSharpEntity(cenv:cenv, entity:EntityRef) =
 
             parts |> List.collect (fun part -> 
                 res |> List.map (fun path -> path + "." + part)))
+
+    member __.FindNestedTypeByName name =
+        match entity.ModuleOrNamespaceType.AllEntitiesByCompiledAndLogicalMangledNames.TryFind name with
+        | Some e -> Some(FSharpEntity(cenv, entity.NestedTyconRef e))
+        | None -> None
 
     override x.Equals(other : obj) =
         box x === other ||
@@ -1739,6 +1748,12 @@ and FSharpMemberOrFunctionOrValue(cenv, d:FSharpMemberOrValData, item) =
         | V valRef -> IlxGen.IsValCompiledAsMethod cenv.g valRef.Deref
         | _ -> false
 
+    member x.IsRefCell =
+        not x.IsMember && not x.IsConstructorThisValue &&
+            match d with
+            | V valRef -> (Tastops.isRefCellTy cenv.g valRef.Type)
+            | _ -> false
+
     override x.Equals(other : obj) =
         box x === other ||
         match other with
@@ -2088,6 +2103,18 @@ and FSharpAssemblySignature private (cenv, topAttribs: TypeChecker.TopAttribs op
         | Some tA ->
             tA.assemblyAttrs
             |> List.map (fun a -> FSharpAttribute(cenv,  AttribInfo.FSAttribInfo(cenv.g, a))) |> makeReadOnlyCollection
+
+    member __.FindEntityByPath path =
+        let inline findNested name = function
+            | Some (e : Entity) when e.IsModuleOrNamespace ->
+                e.ModuleOrNamespaceType.AllEntitiesByCompiledAndLogicalMangledNames.TryFind name
+            | _ -> None
+
+        match path with
+        | hd :: tl ->
+            List.fold (fun a x -> findNested x a) (mtyp.AllEntitiesByCompiledAndLogicalMangledNames.TryFind hd) tl
+            |> Option.bind (fun e -> Some (FSharpEntity(cenv, rescopeEntity optViewedCcu e)))
+        | _ -> None
 
     override x.ToString() = "<assembly signature>"
 
