@@ -23,7 +23,7 @@ System.Console.OutputEncoding <- System.Text.Encoding.UTF8
 // Information about the project to be used at NuGet and in AssemblyInfo files
 // --------------------------------------------------------------------------------------
 
-let project = "FSharp.Compiler.Service"
+let project = "JetBrains.FSharp.Compiler.Service"
 let authors = ["Microsoft Corporation, Dave Thomas, Anh-Dung Phan, Tomas Petricek"]
 
 let gitOwner = "fsharp"
@@ -168,7 +168,7 @@ Target "NuGet.NetFx" (fun _ ->
     CopyDir buildDir releaseDir allFiles
     Paket.Pack (fun p ->
         { p with
-            TemplateFile = "nuget/FSharp.Compiler.Service.template"
+            TemplateFile = "nuget/JetBrains.FSharp.Compiler.Service.template"
             Version = nugetVersion
             OutputPath = releaseDir
             ReleaseNotes = toLines release.Notes })
@@ -184,7 +184,7 @@ Target "NuGet.NetFx.Debug" (fun _ ->
     CopyDir buildDir debugDir allFiles
     Paket.Pack (fun p ->
         { p with
-            TemplateFile = "nuget/FSharp.Compiler.Service.template"
+            TemplateFile = "nuget/JetBrains.FSharp.Compiler.Service.template"
             Version = nugetDebugVersion
             OutputPath = debugDir
             ReleaseNotes = toLines release.Notes })
@@ -400,7 +400,7 @@ Target "All.NetFx" DoNothing
   ==> "CodeGen.NetCore"
   ==> "Build.NetCore"
   =?> ("Build.NetCore.Debug", buildDebugPackage)
-  ==> "RunTests.NetCore"
+//  ==> "RunTests.NetCore"
   ==> "All.NetCore"
 
 "Clean"
@@ -408,7 +408,7 @@ Target "All.NetFx" DoNothing
   ==> "AssemblyInfo"
   ==> "Build.NetFx"
   =?> ("Build.NetFx.Debug", buildDebugPackage)
-  ==> "RunTests.NetFx"
+//  ==> "RunTests.NetFx"
   ==> "All.NetFx"
 
 "All.NetFx"

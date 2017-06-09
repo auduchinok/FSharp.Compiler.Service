@@ -1,5 +1,5 @@
 type file
-id FSharp.Compiler.Service
+id JetBrains.FSharp.Compiler.Service
 description
     The F# compiler services package contains a custom build of the F# compiler that
 	exposes additional functionality for implementing F# language bindings, additional
