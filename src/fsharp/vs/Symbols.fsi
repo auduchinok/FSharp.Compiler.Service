@@ -401,6 +401,8 @@ and [<Class>] FSharpField =
     /// Indicates if the field is declared 'static'
     member IsMutable: bool
 
+    member IsCLIMutable: bool
+
     /// Indicates if the field has a literal value
     member IsLiteral: bool
 
@@ -851,6 +853,8 @@ and [<Class>] FSharpActivePatternCase =
       /// XML documentation signature for the active pattern case, used for .xml file lookup for compiled code
     member XmlDocSig: string
 
+    member CaseIndex: int
+
 /// Represents all cases within an active pattern
 and [<Class>] FSharpActivePatternGroup =
     /// The names of the active pattern cases
@@ -864,6 +868,8 @@ and [<Class>] FSharpActivePatternGroup =
 
     /// Try to get the enclosing entity of the active pattern
     member EnclosingEntity : FSharpEntity option
+
+    member Name : string Option
 
 and [<Class>] FSharpType =
     /// Internal use only. Create a ground type.

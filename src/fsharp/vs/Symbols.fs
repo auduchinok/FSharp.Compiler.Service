@@ -717,6 +717,13 @@ and FSharpField(cenv: cenv, d: FSharpFieldData)  =
     member __.IsUnresolved = 
         isUnresolved()
 
+    member __.IsCLIMutable =
+        if isUnresolved() then false else
+        match d.DeclaringTyconRef.TryDeref with
+        | VSome tycon ->
+            TryFindFSharpBoolAttribute cenv.g cenv.g.attrib_CLIMutableAttribute tycon.Attribs = Some true
+        | _ -> false
+
     member __.IsMutable = 
         if isUnresolved() then false else 
         match d.TryRecdField with 
@@ -870,6 +877,8 @@ and FSharpActivePatternCase(cenv, apinfo: PrettyNaming.ActivePatternInfo, typ, n
         | Some (_, docsig) -> docsig
         | _ -> ""
 
+    member __.CaseIndex = n
+
 and FSharpActivePatternGroup(cenv, apinfo:PrettyNaming.ActivePatternInfo, typ, valOpt) =
     
     member __.Names = makeReadOnlyCollection apinfo.Names
@@ -884,6 +893,8 @@ and FSharpActivePatternGroup(cenv, apinfo:PrettyNaming.ActivePatternInfo, typ, v
             match vref.ActualParent with 
             | ParentNone -> None
             | Parent p -> Some (FSharpEntity(cenv,  p)))
+
+    member __.Name = valOpt |> Option.bind (fun vref -> Some vref.LogicalName)
 
 and FSharpGenericParameter(cenv, v:Typar) = 
 
