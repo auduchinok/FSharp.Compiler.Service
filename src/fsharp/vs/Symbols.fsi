@@ -112,7 +112,10 @@ and [<Class>] FSharpAssemblySignature =
 
     /// Get the declared attributes for the assembly.
     /// Only available when parsing an entire project. 
-    member Attributes: IList<FSharpAttribute>     
+    member Attributes: IList<FSharpAttribute>
+    
+    /// Find entity using compiled names
+    member FindEntityByPath: string list -> FSharpEntity option
 
 
 /// A subtype of FSharpSymbol that represents a type definition or module as seen by the F# language
@@ -149,6 +152,8 @@ and [<Class>] FSharpEntity =
 
     /// Get the full name of the type or module if it is available
     member TryFullName: string option
+
+    member FullCompiledName: string
 
     /// Get the declaration location for the type constructor 
     member DeclarationLocation: range 
@@ -279,7 +284,7 @@ and [<Class>] FSharpEntity =
     member UnionCases : IList<FSharpUnionCase>
 
 
-    /// Indicates if the type is a delegate with the given Invoke signature 
+    /// Indicates if the type is a delegate with the given Invgeneoke signature 
     member FSharpDelegateSignature : FSharpDelegateSignature
 
     /// Get the declared accessibility of the type
@@ -290,6 +295,8 @@ and [<Class>] FSharpEntity =
 
     /// Get all compilation paths, taking `Module` suffixes into account.
     member AllCompilationPaths : string list
+
+    member FindNestedTypeByName: string -> FSharpEntity option
 
 /// Represents a delegate signature in an F# symbol
 and [<Class>] FSharpDelegateSignature =
@@ -393,6 +400,8 @@ and [<Class>] FSharpField =
 
     /// Indicates if the field is declared 'static'
     member IsMutable: bool
+
+    member IsCLIMutable: bool
 
     /// Indicates if the field has a literal value
     member IsLiteral: bool
@@ -796,6 +805,8 @@ and [<Class>] FSharpMemberOrFunctionOrValue =
     /// Indicates if this is a constructor.
     member IsConstructor : bool
 
+    member IsRefCell : bool
+
 
 /// A subtype of FSharpSymbol that represents a parameter 
 and [<Class>] FSharpParameter =
@@ -842,6 +853,8 @@ and [<Class>] FSharpActivePatternCase =
       /// XML documentation signature for the active pattern case, used for .xml file lookup for compiled code
     member XmlDocSig: string
 
+    member CaseIndex: int
+
 /// Represents all cases within an active pattern
 and [<Class>] FSharpActivePatternGroup =
     /// The names of the active pattern cases
@@ -855,6 +868,8 @@ and [<Class>] FSharpActivePatternGroup =
 
     /// Try to get the enclosing entity of the active pattern
     member EnclosingEntity : FSharpEntity option
+
+    member Name : string Option
 
 and [<Class>] FSharpType =
     /// Internal use only. Create a ground type.
